@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:provider/provider.dart';
+import '../providers/user_places_provider.dart';
 
 import '../widgets/image_input.dart';
 
@@ -12,6 +15,26 @@ class AddPlace extends StatefulWidget {
 
 class _AddPlaceState extends State<AddPlace> {
   final _titleController = TextEditingController();
+  File? _pickedImage;
+
+  void _selectImage(File pickedImage) {
+    _pickedImage = pickedImage;
+  }
+
+  void _whenClickAddPlace() {
+    print('0///////////////////////////////////');
+    if (_titleController.text.isEmpty || _pickedImage == null) {
+      print(_pickedImage);
+      print(_titleController.text);
+      print('truetruetruetruetruetruetruetrue');
+      return;
+    }
+    // here i use the provider to pass the value here in this page to add it in the placeList
+    Provider.of<UserPlaces>(context, listen: false)
+        .addPlaceToList(_titleController.text, _pickedImage!);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,13 +58,13 @@ class _AddPlaceState extends State<AddPlace> {
                   SizedBox(
                     height: 20,
                   ),
-                  ImageInput()
+                  ImageInput(_selectImage) //widget folder
                 ],
               ),
             ),
           )),
           ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: _whenClickAddPlace,
               icon: Icon(Icons.add),
               label: Text('AddPlace'),
               style: ElevatedButton.styleFrom(
